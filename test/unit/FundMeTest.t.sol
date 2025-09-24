@@ -3,8 +3,8 @@
 pragma solidity ^0.8.18;
 
 import {Test, console} from "forge-std/Test.sol";
-import {FundMe} from"../../src/FundMe.sol";
-import {DeployFundMe} from"../../script/DeployFundMe.s.sol";
+import {FundMe} from "../../src/FundMe.sol";
+import {DeployFundMe} from "../../script/DeployFundMe.s.sol";
 
 contract FundMeTest is Test {
     FundMe fundMe;
@@ -19,19 +19,17 @@ contract FundMeTest is Test {
         DeployFundMe deployFundMe = new DeployFundMe();
         fundMe = deployFundMe.run();
         vm.deal(USER, STARTING_BALANCE); // this is a cheatcode that sets the balance of an address
-
     }
 
-    function testMinimumDollarIsFive() public view{
+    function testMinimumDollarIsFive() public view {
         assertEq(fundMe.MINIMUM_USD(), 5e18);
-
     }
 
-    function testOwnerIsMsgSender() public view{
+    function testOwnerIsMsgSender() public view {
         assertEq(fundMe.getOwner(), address(msg.sender));
     }
 
-    function testPriceFeedVersionIsAccurate() public view{
+    function testPriceFeedVersionIsAccurate() public view {
         uint256 version = fundMe.getVersion();
         assertEq(version, 4);
     }
@@ -64,7 +62,6 @@ contract FundMeTest is Test {
     }
 
     function testOnlyOwnerCanWithdraw() public funded {
-
         vm.expectRevert();
         vm.prank(USER);
         fundMe.withdraw();
@@ -97,7 +94,7 @@ contract FundMeTest is Test {
         //Arrange
         uint160 numberOfFunders = 10;
         uint256 startingFunderIndex = 1;
-        for(uint256 i = startingFunderIndex; i < numberOfFunders; i++){
+        for (uint256 i = startingFunderIndex; i < numberOfFunders; i++) {
             //vm.prank
             //vm.deal
             //hoax is prank+deal
@@ -114,22 +111,16 @@ contract FundMeTest is Test {
         fundMe.withdraw();
         vm.stopPrank();
 
-
         //Assert
         assert(address(fundMe).balance == 0);
-        assert(
-            fundMe.getOwner().balance == 
-                startingOwnerBalance + startingFundMeBalance
-        );
-
-
+        assert(fundMe.getOwner().balance == startingOwnerBalance + startingFundMeBalance);
     }
-    
+
     function testWithdrawFromMultipleFundersCheaper() public funded {
         //Arrange
         uint160 numberOfFunders = 10;
         uint256 startingFunderIndex = 1;
-        for(uint256 i = startingFunderIndex; i < numberOfFunders; i++){
+        for (uint256 i = startingFunderIndex; i < numberOfFunders; i++) {
             //vm.prank
             //vm.deal
             //hoax is prank+deal
@@ -146,14 +137,8 @@ contract FundMeTest is Test {
         fundMe.cheaperWithdraw();
         vm.stopPrank();
 
-
         //Assert
         assert(address(fundMe).balance == 0);
-        assert(
-            fundMe.getOwner().balance == 
-                startingOwnerBalance + startingFundMeBalance
-        );
-
-
+        assert(fundMe.getOwner().balance == startingOwnerBalance + startingFundMeBalance);
     }
 }
